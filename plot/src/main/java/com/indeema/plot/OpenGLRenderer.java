@@ -1,7 +1,7 @@
 package com.indeema.plot;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLSurfaceView;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,7 +13,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_LINE_LOOP;
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
@@ -26,7 +26,7 @@ import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
 
-public class OpenGLRenderer implements Renderer {
+public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     private final static int POSITION_COUNT = 4;
 
@@ -48,7 +48,7 @@ public class OpenGLRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
-        glClearColor(0f, 0f, 0f, 1f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         int vertexShaderId = ShaderUtils.CreateShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
         int fragmentShaderId = ShaderUtils.CreateShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
         programId = ShaderUtils.CreateProgram(vertexShaderId, fragmentShaderId);
@@ -77,22 +77,20 @@ public class OpenGLRenderer implements Renderer {
     }
 
     private void bindData() {
-        // координаты
         aPositionLocation = glGetAttribLocation(programId, "a_Position");
         vertexData.position(0);
-        glVertexAttribPointer(aPositionLocation, POSITION_COUNT, GL_FLOAT,
-                false, 0, vertexData);
+
+        glVertexAttribPointer(aPositionLocation, POSITION_COUNT, GL_FLOAT, false, 0, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
 
-        // цвет
         uColorLocation = glGetUniformLocation(programId, "u_Color");
     }
 
     @Override
     public void onDrawFrame(GL10 arg0) {
         glClear(GL_COLOR_BUFFER_BIT);
-        glUniform4f(uColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_POINTS, 0, 2);
+        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+        glDrawArrays(GL_LINE_LOOP, 0, 1);
     }
 
 }
